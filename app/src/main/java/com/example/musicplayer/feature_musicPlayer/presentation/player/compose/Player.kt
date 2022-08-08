@@ -11,4 +11,5 @@ fun Player(
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
 
+    val state = viewModel.state.value
 }

@@ -1,10 +1,12 @@
 package com.example.musicplayer.feature_musicPlayer
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.navigation.compose.rememberNavController
-import com.example.musicplayer.feature_musicPlayer.presentation.songsList.compose.SongsList
+import com.example.musicplayer.feature_musicPlayer.presentation.unit.navigation.NavGraph
+import com.example.musicplayer.feature_musicPlayer.presentation.unit.songs.GetSongs
 import com.example.musicplayer.ui.theme.MusicPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -12,10 +14,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             MusicPlayerTheme {
-                SongsList(rememberNavController())
+                NavGraph()
             }
         }
     }

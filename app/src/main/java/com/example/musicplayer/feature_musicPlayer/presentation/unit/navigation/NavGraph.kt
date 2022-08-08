@@ -20,7 +20,7 @@ fun NavGraph(
         composable(
             route = Screen.songsListScreen.route
         ) {
-            Player(
+            SongsList(
                 navController = navController
             )
         }
@@ -28,7 +28,7 @@ fun NavGraph(
         composable(
             route = Screen.playerScreen.route
         ) {
-            SongsList(
+            Player(
                 navController = navController
             )
         }
