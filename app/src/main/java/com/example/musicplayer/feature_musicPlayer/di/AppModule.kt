@@ -15,4 +15,5 @@ class AppModule {
     @Singleton
     @Provides
     fun provideContext(application: Application): Context = application.applicationContext
+
 }

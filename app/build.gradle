@@ -78,4 +78,6 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
+
+    implementation 'com.karumi:dexter:6.2.2'
 }
