@@ -30,8 +30,10 @@ fun SongsList(
     val context = LocalContext.current
     val state = viewModel.state.value
 
-    LaunchedEffect(key1 = true, key2 = state.isPermission) {
-        if(isExternalStoragePermissions(context)) {
+    LaunchedEffect(key1 = state.isPermission) {
+        if(!isExternalStoragePermissions(context)) {
+            viewModel.onEvent(SongsListEvent.isPermission(false))
+        } else {
             viewModel.onEvent(SongsListEvent.isPermission(true))
         }
     }
