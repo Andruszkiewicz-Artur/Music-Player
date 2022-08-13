@@ -4,7 +4,7 @@ import androidx.navigation.NavHostController
 
 sealed class SongsListEvent() {
     data class chooseSong(
-        val songUri: String,
+        val path: String,
         val navController: NavHostController
     ): SongsListEvent()
 

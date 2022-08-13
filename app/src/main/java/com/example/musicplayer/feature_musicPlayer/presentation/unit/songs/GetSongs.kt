@@ -7,7 +7,6 @@ fun GetSongs(file: File = Environment.getExternalStorageDirectory()): Array<File
     val songs = mutableListOf<File>()
     val files = file.listFiles()
 
-    System.out.println("Files: " + (files?.size ?: 0))
     if(files != null) {
         for ( singleFile in files) {
             if(singleFile.isDirectory && !singleFile.isHidden) {

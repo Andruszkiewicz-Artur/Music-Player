@@ -66,7 +66,7 @@ fun SongsList(
                                 .clickable {
                                     viewModel.onEvent(
                                         SongsListEvent.chooseSong(
-                                            songUri = it.absolutePath,
+                                            path = it.absolutePath,
                                             navController = navController
                                         )
                                     )
