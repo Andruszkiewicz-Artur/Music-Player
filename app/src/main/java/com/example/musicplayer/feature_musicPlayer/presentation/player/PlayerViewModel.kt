@@ -53,7 +53,6 @@ class PlayerViewModel @Inject constructor(
                 if(mediaPlayer.isPlaying) {
                     offMusic()
                 }
-
                 try {
                     if(isFirst) {
                         mediaPlayer.setDataSource(application, _state.value.currentSong!!.toUri())

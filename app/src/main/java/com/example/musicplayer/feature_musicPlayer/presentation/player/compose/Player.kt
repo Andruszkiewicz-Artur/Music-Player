@@ -17,6 +17,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerEvent
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerViewModel
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.resources.MaterialResources
 
 @Composable
 fun Player(
@@ -54,6 +56,7 @@ fun Player(
                         viewModel.onEvent(PlayerEvent.PreviousSong)
                     }
             )
+
             Icon(
                 imageVector = if(state.isPlay) Icons.TwoTone.PauseCircle else Icons.TwoTone.PlayCircle,
                 contentDescription = null,
@@ -61,7 +64,7 @@ fun Player(
                 modifier = Modifier
                     .size(100.dp)
                     .clickable {
-                        if(state.isPlay) {
+                        if (state.isPlay) {
                             viewModel.onEvent(PlayerEvent.StopSong)
                         } else {
                             viewModel.onEvent(PlayerEvent.PlaySong)
