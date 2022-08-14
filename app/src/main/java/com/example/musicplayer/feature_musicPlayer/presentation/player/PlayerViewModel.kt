@@ -11,6 +11,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.musicplayer.feature_musicPlayer.mediaPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -23,8 +24,7 @@ class PlayerViewModel @Inject constructor(
     private val allSongs: Array<File>,
     private val application: Application
 ): ViewModel() {
-
-    private var mediaPlayer: MediaPlayer
+    private var isFirst = true
 
     private val _state = mutableStateOf(PlayerState())
     val state: State<PlayerState> = _state
@@ -34,75 +34,95 @@ class PlayerViewModel @Inject constructor(
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
 
         savedStateHandle.get<String>("path")?.let { path ->
+            System.out.println(path)
             if(path.isNotBlank()) {
                 _state.value = state.value.copy(
                     currentSong = allSongs.single {
                         it.path == path
-                    },
-                    songsList = allSongs
+                    }
                 )
             }
         }
+
+        System.out.println(state.value.currentSong)
     }
 
     fun onEvent(event: PlayerEvent) {
         when(event) {
             is PlayerEvent.PlaySong -> {
+                if(mediaPlayer.isPlaying) {
+                    offMusic()
+                }
+
                 try {
-                    mediaPlayer.setDataSource(application, _state.value.currentSong!!.toUri())
-                    mediaPlayer.prepare()
+                    if(isFirst) {
+                        mediaPlayer.setDataSource(application, _state.value.currentSong!!.toUri())
+                        mediaPlayer.prepare()
+                        isFirst = false
+                    }
                     mediaPlayer.start()
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
+                _state.value = state.value.copy(
+                    isPlay = mediaPlayer.isPlaying
+                )
             }
             is PlayerEvent.StopSong -> {
                 if (mediaPlayer.isPlaying) {
-                    mediaPlayer.stop()
-                    mediaPlayer.release()
+                    mediaPlayer.pause()
                 }
+                _state.value = state.value.copy(
+                    isPlay = false
+                )
             }
             is PlayerEvent.ResetSong -> {
-                if (mediaPlayer.isPlaying) {
-                    mediaPlayer.stop()
-                    mediaPlayer.reset()
-                    mediaPlayer.release()
-                }
+                offMusic()
+                onEvent(PlayerEvent.PlaySong)
             }
             is PlayerEvent.PreviousSong -> {
-                onEvent(PlayerEvent.ResetSong)
+                offMusic()
                 mediaPlayer = MediaPlayer()
-                allSongs.forEachIndexed { index, song ->
-                    if(song == _state.value.currentSong) {
-                        if(allSongs.first() == song) {
-                            _state.value = state.value.copy(
-                                currentSong = allSongs.last()
-                            )
-                        } else {
-                            _state.value = state.value.copy(
-                                currentSong = allSongs[index - 1]
-                            )
-                        }
-                    }
+                val index = allSongs.indexOf(_state.value.currentSong)
+                if (index == 0) {
+                    _state.value = state.value.copy(
+                        currentSong = allSongs.last()
+                    )
+                } else {
+                    _state.value = state.value.copy(
+                        currentSong = allSongs[index - 1]
+                    )
                 }
+                onEvent(PlayerEvent.PlaySong)
             }
             is PlayerEvent.NextSong -> {
-                onEvent(PlayerEvent.ResetSong)
-                mediaPlayer = MediaPlayer()
-                allSongs.forEachIndexed { index, song ->
-                    if(song == _state.value.currentSong) {
-                        if(allSongs.last() == song) {
-                            _state.value = state.value.copy(
-                                currentSong = allSongs.first()
-                            )
-                        } else {
-                            _state.value = state.value.copy(
-                                currentSong = allSongs[index + 1]
-                            )
-                        }
-                    }
+                offMusic()
+                val index = allSongs.indexOf(_state.value.currentSong)
+                if (index == allSongs.size - 1) {
+                    _state.value = state.value.copy(
+                        currentSong = allSongs.first()
+                    )
+                } else {
+                    _state.value = state.value.copy(
+                        currentSong = allSongs[index + 1]
+                    )
                 }
+                onEvent(PlayerEvent.PlaySong)
             }
         }
+    }
+
+    private fun offMusic() {
+        isFirst = true
+        if(mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
+        mediaPlayer.reset()
+        mediaPlayer.release()
+
+        mediaPlayer = MediaPlayer()
+        _state.value = state.value.copy(
+            isPlay = false
+        )
     }
 }

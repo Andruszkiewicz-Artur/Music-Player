@@ -56,6 +56,6 @@ sealed class Screen(
     ) fun sendPath(
         path: String
     ): String {
-        return this.route + "?uri=$path"
+        return this.route + "?path=$path"
     }
 }
