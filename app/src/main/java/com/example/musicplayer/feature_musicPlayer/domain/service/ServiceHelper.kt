@@ -51,7 +51,7 @@ object ServiceHelper {
         )
     }
 
-    fun backPendingIntent(context: Context): PendingIntent {
+    fun previousPendingIntent(context: Context): PendingIntent {
         val cancelIntent = Intent(context, MusicPlayerService::class.java).apply {
             putExtra(MUSIC_PLAYER_STATE, MusicPlayerState.Back.name)
         }
