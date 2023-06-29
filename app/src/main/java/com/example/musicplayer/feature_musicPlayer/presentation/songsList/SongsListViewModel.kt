@@ -25,7 +25,7 @@ class SongsListViewModel @Inject constructor(
             is SongsListEvent.isPermission -> {
                 _state.value = state.value.copy(
                     isPermission = event.isPermission,
-                    songsList = allSongs
+                    songsList = allSongs.toMutableList()
                 )
             }
         }

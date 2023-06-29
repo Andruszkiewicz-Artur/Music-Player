@@ -4,5 +4,5 @@ import java.io.File
 
 data class SongsListState(
     val isPermission: Boolean = true,
-    val songsList: Array<File> = emptyArray()
+    val songsList: MutableList<File> = mutableListOf()
 )

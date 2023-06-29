@@ -58,32 +58,17 @@ fun SongsList(
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
                 ) {
-                    items(state.songsList) {
-                        Text(
-                            text = it.name.replace(".mp3", "").replace("wav", ""),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.onEvent(
-                                        SongsListEvent.chooseSong(
-                                            path = it.absolutePath,
-                                            navController = navController
-                                        )
-                                    )
-                                }
-                        )
-                        if (it != state.songsList.last()) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
-                                    .height(1.dp)
-                                    .background(
-                                        color = MaterialTheme.colorScheme.secondary
-                                    )
+                    items(state.songsList) {song ->
+                        ItemSongPresentation(
+                            song = song,
+                            isLast = state.songsList.last() == song
+                        ) {
+                            viewModel.onEvent(
+                                SongsListEvent.chooseSong(
+                                    path = song.absolutePath,
+                                    navController = navController
+                                )
                             )
-                        } else {
-                            Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
                 }
@@ -98,31 +83,8 @@ fun SongsList(
                 )
             }
         } else {
-            Text(
-                text = "You need allow permissions!",
-                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                textAlign = TextAlign.Center
-            )
-            Button(
-                onClick = {
-                    viewModel.onEvent(SongsListEvent.isPermission(isExternalStoragePermissions(context)))
-                },
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-            ) {
-                Text(
-                    text = "Allow permissions",
-                    color = Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+            PermissionPresentaiton {
+                viewModel.onEvent(SongsListEvent.isPermission(isExternalStoragePermissions(context)))
             }
         }
     }

@@ -17,8 +17,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerEvent
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerViewModel
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.resources.MaterialResources
 
 @Composable
 fun Player(
