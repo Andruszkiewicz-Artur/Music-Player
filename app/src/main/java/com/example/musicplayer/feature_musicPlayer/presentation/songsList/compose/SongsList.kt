@@ -14,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.musicplayer.R
 import com.example.musicplayer.feature_musicPlayer.core.Permisions.isExternalStoragePermissions
 import com.example.musicplayer.feature_musicPlayer.presentation.songsList.SongsListEvent
 import com.example.musicplayer.feature_musicPlayer.presentation.songsList.SongsListViewModel
@@ -46,7 +48,7 @@ fun SongsList(
     ) {
         if (state.isPermission) {
             Text(
-                text = "Music Playlist",
+                text = stringResource(id = R.string.MusicPlaylist),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier
@@ -74,7 +76,7 @@ fun SongsList(
                 }
             } else {
                 Text(
-                    text = "You don`t have songs on you phone!" ,
+                    text = stringResource(id = R.string.YouDontHaveSongsOnYouPhone) ,
                     color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
                     modifier = Modifier
                         .fillMaxWidth()

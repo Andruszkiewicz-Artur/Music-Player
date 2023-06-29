@@ -16,7 +16,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.musicplayer.R
 import java.io.File
 
 @Composable
@@ -40,7 +42,7 @@ fun ItemSongPresentation(
         )
         Icon(
             imageVector = Icons.Filled.PlayArrow,
-            contentDescription = "Play",
+            contentDescription = stringResource(id = R.string.Play),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .weight(1f)

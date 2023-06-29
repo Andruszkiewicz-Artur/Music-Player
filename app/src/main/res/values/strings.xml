@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Music Player</string>
+    <string name="AllowPermissions">Allow permissions</string>
+    <string name="YouNeedAllowPermissions">You need allow permissions!</string>
+    <string name="Play">Play</string>
+    <string name="MusicPlaylist">Music Playlist</string>
+    <string name="YouDontHaveSongsOnYouPhone">You don`t have songs on you phone!</string>
 </resources>
