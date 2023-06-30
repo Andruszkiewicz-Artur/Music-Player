@@ -16,5 +16,5 @@ object Constants {
     const val START_REQUEST_CODE = 101
     const val STOP_REQUEST_CODE = 102
     const val NEXT_REQUEST_CODE = 103
-    const val BACK_REQUEST_CODE = 104
+    const val PREVIOUS_REQUEST_CODE = 104
 }

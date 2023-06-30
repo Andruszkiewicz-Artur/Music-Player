@@ -8,5 +8,5 @@ data class MusicPlayerState(
     val musicList: MutableList<File> = mutableListOf(),
     val currentSong: File? = null,
     val currentState: MusicPlayerState = MusicPlayerState.Idle,
-    val musicPlayer: MediaPlayer = MediaPlayer()
+    val musicPlayer: MediaPlayer? = null
 )

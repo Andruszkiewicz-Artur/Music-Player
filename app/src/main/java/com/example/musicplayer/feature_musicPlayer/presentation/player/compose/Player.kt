@@ -71,16 +71,6 @@ fun Player(
                     }
             )
             Icon(
-                imageVector = Icons.TwoTone.Repeat,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .size(60.dp)
-                    .clickable {
-                        viewModel.onEvent(PlayerEvent.ResetSong)
-                    }
-            )
-            Icon(
                 imageVector = Icons.TwoTone.FastForward,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,

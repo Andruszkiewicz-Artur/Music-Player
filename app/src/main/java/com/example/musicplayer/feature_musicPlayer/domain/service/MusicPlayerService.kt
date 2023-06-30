@@ -46,12 +46,6 @@ class MusicPlayerService: Service() {
         _state.value = state.value.copy(
             musicList = GetSongs().toMutableList()
         )
-
-        _state.value.musicPlayer.setAudioAttributes(
-            AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-        )
         context = applicationContext
     }
 
@@ -82,7 +76,7 @@ class MusicPlayerService: Service() {
                     }
                     ACTION_SERVICE_STOP -> {
                         stopPlayMusic()
-                        stopForegroundService()
+//                        stopForegroundService()
                     }
                     ACTION_SERVICE_NEXT -> {
                         playNextMusic()
@@ -97,21 +91,26 @@ class MusicPlayerService: Service() {
     }
 
     private fun startPlayMusic() {
-        if (_state.value.currentSong == null) {
+        if (_state.value.musicPlayer == null) {
             playAudio(context, _state.value.musicList.first())
             _state.value = state.value.copy(
                 currentSong = _state.value.musicList.first()
             )
         } else {
-            _state.value.musicPlayer.start()
+            _state.value.musicPlayer!!.start()
         }
         _state.value = state.value.copy(
             currentState = MusicPlayerState.Started
         )
     }
     private fun stopPlayMusic() {
-        if(_state.value.currentSong != null) {
-            _state.value.musicPlayer.stop()
+        if (_state.value.musicPlayer != null) {
+            if(_state.value.musicPlayer!!.isPlaying) {
+                _state.value.musicPlayer!!.pause()
+                _state.value = state.value.copy(
+                    currentState = MusicPlayerState.Stopped
+                )
+            }
         }
     }
 
@@ -121,8 +120,10 @@ class MusicPlayerService: Service() {
                 _state.value.currentSong!!,
                 isNext = true
             )
-
             playAudio(context, song)
+            _state.value = state.value.copy(
+                currentState = MusicPlayerState.Started
+            )
         }
     }
 
@@ -134,6 +135,9 @@ class MusicPlayerService: Service() {
             )
 
             playAudio(context, song)
+            _state.value = state.value.copy(
+                currentState = MusicPlayerState.Started
+            )
         }
     }
 
@@ -158,12 +162,34 @@ class MusicPlayerService: Service() {
     }
 
     private fun playAudio(context: Context, song: File) {
-        try {
-            _state.value.musicPlayer.setDataSource(context, Uri.parse(song.absolutePath))
-            _state.value.musicPlayer.prepare()
-            _state.value.musicPlayer.start()
-        } catch (e: Exception) {
-            Log.d("Check Error", e.message ?: "Unknown Error")
+        if (_state.value.musicPlayer != null) {
+            _state.value.musicPlayer?.stop()
+            _state.value.musicPlayer?.release()
+
+            _state.value = state.value.copy(
+                musicPlayer = null
+            )
+        }
+
+        _state.value = state.value.copy(
+            musicPlayer = MediaPlayer()
+        )
+        _state.value.musicPlayer?.setAudioAttributes(
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+        )
+
+        val musicPlayer = _state.value.musicPlayer
+
+        if (musicPlayer != null) {
+            try {
+                musicPlayer.setDataSource(context, Uri.parse(song.absolutePath))
+                musicPlayer.prepare()
+                musicPlayer.start()
+            } catch (e: Exception) {
+                Log.d("Check Error", e.message ?: "Unknown Error")
+            }
         }
     }
 

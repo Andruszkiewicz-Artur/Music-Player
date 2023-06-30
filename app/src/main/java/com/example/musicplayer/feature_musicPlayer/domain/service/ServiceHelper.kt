@@ -4,10 +4,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.example.musicplayer.feature_musicPlayer.MainActivity
-import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.BACK_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.CLICK_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.MUSIC_PLAYER_STATE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NEXT_REQUEST_CODE
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.PREVIOUS_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.START_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.STOP_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
@@ -56,7 +56,7 @@ object ServiceHelper {
             putExtra(MUSIC_PLAYER_STATE, MusicPlayerState.Previous.name)
         }
         return PendingIntent.getService(
-            context, BACK_REQUEST_CODE, cancelIntent, flag
+            context, PREVIOUS_REQUEST_CODE, cancelIntent, flag
         )
     }
 
