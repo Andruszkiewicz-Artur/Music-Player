@@ -1,5 +1,6 @@
 package com.example.musicplayer.feature_musicPlayer.domain.service
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -11,9 +12,11 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Environment
 import android.util.Log
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
+import com.example.musicplayer.R
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_NEXT
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_PREVIOUS
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_START
@@ -23,17 +26,22 @@ import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTI
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_CHANNEL_NAME
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_ID
 import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import javax.inject.Inject
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
+@ExperimentalAnimationApi
+@AndroidEntryPoint
 class MusicPlayerService: Service() {
     @Inject
     lateinit var notificationManager: NotificationManager
     @Inject
     lateinit var notificationBuilder: NotificationCompat.Builder
+    @Inject
+    lateinit var context: Context
 
-    private lateinit var context: Context
     private val binder = MusicPlayerBinder()
 
     private val _state = mutableStateOf(com.example.musicplayer.feature_musicPlayer.domain.service.MusicPlayerState())
@@ -46,7 +54,6 @@ class MusicPlayerService: Service() {
         _state.value = state.value.copy(
             musicList = GetSongs().toMutableList()
         )
-        context = applicationContext
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -56,33 +63,39 @@ class MusicPlayerService: Service() {
                 MusicPlayerState.Started.name -> {
                     startPlayMusic()
                     startForegroundService()
+                    setStopButton()
                 }
                 MusicPlayerState.Stopped.name -> {
                     stopPlayMusic()
-                    stopForegroundService()
+                    setPlayButton()
                 }
                 MusicPlayerState.Next.name -> {
                     playNextMusic()
+                    setStopButton()
                 }
                 MusicPlayerState.Previous.name -> {
                     playPreviousMusic()
+                    setStopButton()
                 }
             }
             intent?.action.let {
                 when (it) {
                     ACTION_SERVICE_START -> {
                         startPlayMusic()
-//                        startForegroundService()
+                        startForegroundService()
+                        setStopButton()
                     }
                     ACTION_SERVICE_STOP -> {
                         stopPlayMusic()
-//                        stopForegroundService()
+                        setPlayButton()
                     }
                     ACTION_SERVICE_NEXT -> {
                         playNextMusic()
+                        setStopButton()
                     }
                     ACTION_SERVICE_PREVIOUS -> {
                         playPreviousMusic()
+                        setStopButton()
                     }
                 }
             }
@@ -92,10 +105,10 @@ class MusicPlayerService: Service() {
 
     private fun startPlayMusic() {
         if (_state.value.musicPlayer == null) {
-            playAudio(context, _state.value.musicList.first())
             _state.value = state.value.copy(
                 currentSong = _state.value.musicList.first()
             )
+            playAudio(context, _state.value.musicList.first())
         } else {
             _state.value.musicPlayer!!.start()
         }
@@ -146,11 +159,11 @@ class MusicPlayerService: Service() {
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
 
-    private fun stopForegroundService() {
-        notificationManager.cancel(NOTIFICATION_ID)
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
-    }
+//    private fun stopForegroundService() {
+//        notificationManager.cancel(NOTIFICATION_ID)
+//        stopForeground(STOP_FOREGROUND_REMOVE)
+//        stopSelf()
+//    }
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
@@ -159,6 +172,43 @@ class MusicPlayerService: Service() {
             NotificationManager.IMPORTANCE_LOW
         )
         notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun updateNotification() {
+        notificationManager.notify(
+            NOTIFICATION_ID,
+            notificationBuilder.setContentText(
+                _state.value.currentSong?.name?.replace(".mp3", "")?.replace(".wav", "") ?: ""
+            ).build()
+        )
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun setPlayButton() {
+        notificationBuilder.mActions.removeAt(1)
+        notificationBuilder.mActions.add(
+            1,
+            NotificationCompat.Action(
+                R.drawable.baseline_play_arrow_24,
+                "Play",
+                ServiceHelper.startPendingIntent(this)
+            )
+        )
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun setStopButton() {
+        notificationBuilder.mActions.removeAt(1)
+        notificationBuilder.mActions.add(
+            1,
+            NotificationCompat.Action(
+                R.drawable.baseline_pause_24,
+                "Stop",
+                ServiceHelper.stopPendingIntent(this)
+            )
+        )
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
     }
 
     private fun playAudio(context: Context, song: File) {
@@ -187,6 +237,7 @@ class MusicPlayerService: Service() {
                 musicPlayer.setDataSource(context, Uri.parse(song.absolutePath))
                 musicPlayer.prepare()
                 musicPlayer.start()
+                updateNotification()
             } catch (e: Exception) {
                 Log.d("Check Error", e.message ?: "Unknown Error")
             }

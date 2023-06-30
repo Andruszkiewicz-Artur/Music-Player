@@ -1,6 +1,7 @@
 package com.example.musicplayer.feature_musicPlayer.presentation.player.compose
 
 import android.widget.Space
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -20,6 +21,7 @@ import com.example.musicplayer.feature_musicPlayer.domain.service.MusicPlayerSer
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerEvent
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerViewModel
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Player(
     viewModel: PlayerViewModel = hiltViewModel(),

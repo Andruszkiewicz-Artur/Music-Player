@@ -3,6 +3,7 @@ package com.example.musicplayer.feature_musicPlayer.domain.service
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.compose.animation.ExperimentalAnimationApi
 import com.example.musicplayer.feature_musicPlayer.MainActivity
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.CLICK_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.MUSIC_PLAYER_STATE
@@ -12,6 +13,7 @@ import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.STAR
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.STOP_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
 
+@OptIn(ExperimentalAnimationApi::class)
 object ServiceHelper {
     private const val flag = PendingIntent.FLAG_IMMUTABLE
 

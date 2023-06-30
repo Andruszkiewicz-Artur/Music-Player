@@ -24,13 +24,11 @@ object NotificationModule {
         @ApplicationContext context: Context
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("Music player")
             .setContentText("Music title")
             .setSmallIcon(R.drawable.baseline_music_note_24)
-            .setOngoing(true)
-            .addAction(R.drawable.baseline_skip_previous_24, "", ServiceHelper.previousPendingIntent(context))
-            .addAction(R.drawable.baseline_pause_24, "", ServiceHelper.stopPendingIntent(context))
-            .addAction(R.drawable.baseline_skip_next_24, "", ServiceHelper.nextPendingIntent(context))
+            .addAction(R.drawable.baseline_skip_previous_24, "previous", ServiceHelper.previousPendingIntent(context))
+            .addAction(R.drawable.baseline_pause_24, "stop", ServiceHelper.stopPendingIntent(context))
+            .addAction(R.drawable.baseline_skip_next_24, "next", ServiceHelper.nextPendingIntent(context))
             .setContentIntent(ServiceHelper.clickPendingIntent(context))
     }
 
