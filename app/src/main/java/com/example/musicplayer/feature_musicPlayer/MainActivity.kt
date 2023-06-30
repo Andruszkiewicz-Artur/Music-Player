@@ -1,10 +1,12 @@
 package com.example.musicplayer.feature_musicPlayer
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -23,11 +25,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var isBound by mutableStateOf(false)
-    private lateinit var intervalTimeService: MusicPlayerService
+    private lateinit var musicPlayerService: MusicPlayerService
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as MusicPlayerService.MusicPlayerBinder
-            intervalTimeService = binder.getService()
+            musicPlayerService = binder.getService()
             isBound = true
         }
 
@@ -47,9 +49,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             MusicPlayerTheme {
                 if(isBound) {
-                    NavGraph()
+                    NavGraph(
+                        service = musicPlayerService
+                    )
                 }
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 

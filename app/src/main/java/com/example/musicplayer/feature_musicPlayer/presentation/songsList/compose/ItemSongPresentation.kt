@@ -34,10 +34,7 @@ fun ItemSongPresentation(
             text = song.name.replace(".mp3", "").replace("wav", ""),
             modifier = Modifier
                 .weight(2f)
-                .fillMaxWidth()
-                .clickable {
-                    onClick()
-                },
+                .fillMaxWidth(),
             maxLines = 2
         )
         Icon(
@@ -48,6 +45,9 @@ fun ItemSongPresentation(
                 .weight(1f)
                 .size(40.dp)
                 .padding(start = 8.dp)
+                .clickable {
+                    onClick()
+                }
         )
     }
     if (!isLast) {

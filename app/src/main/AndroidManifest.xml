@@ -5,7 +5,10 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:requestLegacyExternalStorage="true"
@@ -19,6 +22,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer"
         tools:targetApi="31">
+        <service
+            android:name=".feature_musicPlayer.domain.service.MusicPlayerService"
+            android:enabled="true"
+            android:exported="false"/>
         <activity
             android:name=".feature_musicPlayer.MainActivity"
             android:exported="true"

@@ -15,16 +15,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
+import com.example.musicplayer.feature_musicPlayer.domain.service.MusicPlayerService
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerEvent
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerViewModel
 
 @Composable
 fun Player(
-    navController: NavHostController,
-    viewModel: PlayerViewModel = hiltViewModel()
+    viewModel: PlayerViewModel = hiltViewModel(),
+    service: MusicPlayerService
 ) {
-    val state = viewModel.state.value
-
+    val state = service.state.value
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -56,13 +57,13 @@ fun Player(
             )
 
             Icon(
-                imageVector = if(state.isPlay) Icons.TwoTone.PauseCircle else Icons.TwoTone.PlayCircle,
+                imageVector = if(state.currentState == MusicPlayerState.Started) Icons.TwoTone.PauseCircle else Icons.TwoTone.PlayCircle,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier
                     .size(100.dp)
                     .clickable {
-                        if (state.isPlay) {
+                        if (state.currentState == MusicPlayerState.Started) {
                             viewModel.onEvent(PlayerEvent.StopSong)
                         } else {
                             viewModel.onEvent(PlayerEvent.PlaySong)

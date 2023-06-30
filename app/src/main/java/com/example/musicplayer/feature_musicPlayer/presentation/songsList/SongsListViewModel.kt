@@ -1,32 +1,32 @@
 package com.example.musicplayer.feature_musicPlayer.presentation.songsList
 
-import androidx.compose.runtime.State
+import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.musicplayer.feature_musicPlayer.presentation.unit.navigation.Screen
-import com.example.musicplayer.feature_musicPlayer.presentation.unit.songs.GetSongs
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_START
+import com.example.musicplayer.feature_musicPlayer.domain.service.ServiceHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class SongsListViewModel @Inject constructor(
-    val allSongs: Array<File>
+    private val application: Application
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(SongsListState())
-    val state: State<SongsListState> = _state
+    private val _isPermission = mutableStateOf(false)
+    val isPermission = _isPermission
 
     fun onEvent(event: SongsListEvent) {
         when(event) {
-            is SongsListEvent.chooseSong -> {
-                event.navController.navigate(Screen.playerScreen.sendPath(event.path))
+            is SongsListEvent.Play -> {
+                ServiceHelper.triggerForegroundService(
+                    context = application,
+                    action = ACTION_SERVICE_START
+                )
             }
             is SongsListEvent.isPermission -> {
-                _state.value = state.value.copy(
-                    isPermission = event.isPermission,
-                    songsList = allSongs.toMutableList()
-                )
+                _isPermission.value = event.isPermission
             }
         }
     }

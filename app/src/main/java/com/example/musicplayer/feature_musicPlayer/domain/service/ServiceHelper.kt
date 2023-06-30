@@ -10,7 +10,7 @@ import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.MUSI
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NEXT_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.START_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.STOP_REQUEST_CODE
-import com.example.musicplayer.feature_musicPlayer.domain.MusicPlayerState
+import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
 
 object ServiceHelper {
     private const val flag = PendingIntent.FLAG_IMMUTABLE
@@ -53,7 +53,7 @@ object ServiceHelper {
 
     fun previousPendingIntent(context: Context): PendingIntent {
         val cancelIntent = Intent(context, MusicPlayerService::class.java).apply {
-            putExtra(MUSIC_PLAYER_STATE, MusicPlayerState.Back.name)
+            putExtra(MUSIC_PLAYER_STATE, MusicPlayerState.Previous.name)
         }
         return PendingIntent.getService(
             context, BACK_REQUEST_CODE, cancelIntent, flag

@@ -17,7 +17,7 @@ import dagger.hilt.android.scopes.ServiceScoped
 @ExperimentalAnimationApi
 @Module
 @InstallIn(ServiceComponent::class)
-class NotificationModule {
+object NotificationModule {
     @ServiceScoped
     @Provides
     fun provideNotificationBuilder(

@@ -1,6 +1,7 @@
 package com.example.musicplayer.feature_musicPlayer.presentation.songsList.compose
 
 import android.os.Environment
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,18 +22,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.musicplayer.R
 import com.example.musicplayer.feature_musicPlayer.core.Permisions.isExternalStoragePermissions
+import com.example.musicplayer.feature_musicPlayer.domain.service.MusicPlayerService
 import com.example.musicplayer.feature_musicPlayer.presentation.songsList.SongsListEvent
 import com.example.musicplayer.feature_musicPlayer.presentation.songsList.SongsListViewModel
+import com.example.musicplayer.feature_musicPlayer.presentation.unit.navigation.Screen
 
 @Composable
 fun SongsList(
     navController: NavHostController,
-    viewModel: SongsListViewModel = hiltViewModel()
+    viewModel: SongsListViewModel = hiltViewModel(),
+    service: MusicPlayerService
 ) {
     val context = LocalContext.current
-    val state = viewModel.state.value
+    val isPermission = viewModel.isPermission.value
+    val state = service.state.value
 
-    LaunchedEffect(key1 = state.isPermission) {
+    LaunchedEffect(key1 = isPermission) {
         if(!isExternalStoragePermissions(context)) {
             viewModel.onEvent(SongsListEvent.isPermission(false))
         } else {
@@ -41,12 +46,12 @@ fun SongsList(
     }
 
     Column(
-        verticalArrangement = if(state.isPermission) Arrangement.Top else Arrangement.Center,
+        verticalArrangement = if(isPermission) Arrangement.Top else Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        if (state.isPermission) {
+        if (isPermission) {
             Text(
                 text = stringResource(id = R.string.MusicPlaylist),
                 color = MaterialTheme.colorScheme.secondary,
@@ -55,22 +60,18 @@ fun SongsList(
                     .fillMaxWidth()
                     .padding(20.dp)
             )
-            if(state.songsList.isNotEmpty()) {
+            if(state.musicList.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
                 ) {
-                    items(state.songsList) {song ->
+                    items(state.musicList) {song ->
                         ItemSongPresentation(
                             song = song,
-                            isLast = state.songsList.last() == song
+                            isLast = state.musicList.last() == song
                         ) {
-                            viewModel.onEvent(
-                                SongsListEvent.chooseSong(
-                                    path = song.absolutePath,
-                                    navController = navController
-                                )
-                            )
+                            viewModel.onEvent(SongsListEvent.Play)
+                            navController.navigate(Screen.playerScreen.route)
                         }
                     }
                 }
