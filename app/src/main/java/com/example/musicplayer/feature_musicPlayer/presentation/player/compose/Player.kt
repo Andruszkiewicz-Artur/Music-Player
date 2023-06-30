@@ -56,6 +56,9 @@ fun Player(
                 currentTime = state.musicPlayer.currentPosition / 1000
                 delay(500)
             } else {
+                if(state.musicPlayer == null) {
+                    currentTime = 0
+                }
                 break
             }
         }
@@ -129,9 +132,28 @@ fun Player(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(30.dp)
+                    .weight(1f)
                     .clickable {
                         viewModel.onEvent(PlayerEvent.PreviousSong)
+                    }
+            )
+
+            Icon(
+                imageVector = Icons.TwoTone.Replay5,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(30.dp)
+                    .weight(1f)
+                    .clickable {
+                        if (state.musicPlayer != null) {
+                            if(currentTime - 5 <= wholeTime) {
+                                state.musicPlayer.seekTo(0)
+                            } else {
+                                state.musicPlayer.seekTo((currentTime - 5) * 1000)
+                            }
+                        }
                     }
             )
 
@@ -140,7 +162,8 @@ fun Player(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(50.dp)
+                    .weight(2f)
                     .clickable {
                         if (state.currentState == MusicPlayerState.Started) {
                             viewModel.onEvent(PlayerEvent.StopSong)
@@ -149,12 +172,32 @@ fun Player(
                         }
                     }
             )
+
+            Icon(
+                imageVector = Icons.TwoTone.Forward5,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(30.dp)
+                    .weight(1f)
+                    .clickable {
+                        if (state.musicPlayer != null) {
+                            if(currentTime + 5 >= wholeTime) {
+                                state.musicPlayer.seekTo(wholeTime * 1000)
+                            } else {
+                                state.musicPlayer.seekTo((currentTime + 5) * 1000)
+                            }
+                        }
+                    }
+            )
+
             Icon(
                 imageVector = Icons.TwoTone.FastForward,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(30.dp)
+                    .weight(1f)
                     .clickable {
                         viewModel.onEvent(PlayerEvent.NextSong)
                     }
