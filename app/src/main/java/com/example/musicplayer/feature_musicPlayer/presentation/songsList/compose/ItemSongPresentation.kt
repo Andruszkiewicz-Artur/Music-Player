@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.musicplayer.R
+import com.example.musicplayer.feature_musicPlayer.core.extensions.deleteExtensionFile
 import java.io.File
 
 @Composable
@@ -31,7 +32,7 @@ fun ItemSongPresentation(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = song.name.replace(".mp3", "").replace("wav", ""),
+            text = song.name.deleteExtensionFile(),
             modifier = Modifier
                 .weight(2f)
                 .fillMaxWidth(),

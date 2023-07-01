@@ -32,6 +32,7 @@ import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerEve
 import com.example.musicplayer.feature_musicPlayer.presentation.player.PlayerViewModel
 import java.util.concurrent.TimeUnit
 import com.example.musicplayer.R
+import com.example.musicplayer.feature_musicPlayer.core.extensions.deleteExtensionFile
 import kotlinx.coroutines.delay
 
 @SuppressLint("UnrememberedMutableState")
@@ -80,7 +81,7 @@ fun Player(
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = state.currentSong?.name?.replace(".mp3", "")?.replace(".wav", "") ?: "",
+            text = state.currentSong?.name?.deleteExtensionFile() ?: "",
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineSmall

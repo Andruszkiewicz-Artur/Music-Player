@@ -4,7 +4,9 @@ import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_START
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_STOP
 import com.example.musicplayer.feature_musicPlayer.domain.service.ServiceHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,6 +29,19 @@ class SongsListViewModel @Inject constructor(
             }
             is SongsListEvent.isPermission -> {
                 _isPermission.value = event.isPermission
+            }
+
+            SongsListEvent.StartPlay -> {
+                ServiceHelper.triggerForegroundService(
+                    context = application,
+                    action = ACTION_SERVICE_START
+                )
+            }
+            SongsListEvent.StopPlay -> {
+                ServiceHelper.triggerForegroundService(
+                    context = application,
+                    action = ACTION_SERVICE_STOP
+                )
             }
         }
     }
