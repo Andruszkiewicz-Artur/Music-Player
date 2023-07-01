@@ -86,11 +86,19 @@ fun SongsList(
                         items(state.musicList) {song ->
                             ItemSongPresentation(
                                 song = song,
-                                isLast = state.musicList.last() == song
-                            ) {
-                                viewModel.onEvent(SongsListEvent.Play)
-                                navController.navigate(Screen.playerScreen.route)
-                            }
+                                isLast = state.musicList.last() == song,
+                                isPlaying = if (song == state.currentSong) state.musicPlayer?.isPlaying ?: false else false,
+                                onClickPlay = {
+                                    viewModel.onEvent(SongsListEvent.StartPlay)
+                                },
+                                onClickStop = {
+                                    viewModel.onEvent(SongsListEvent.StopPlay)
+                                },
+                                onClickRecord = {
+                                    viewModel.onEvent(SongsListEvent.Play)
+                                    navController.navigate(Screen.playerScreen.route)
+                                }
+                            )
                         }
                     }
                 } else {

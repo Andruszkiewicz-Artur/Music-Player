@@ -1,5 +1,6 @@
 package com.example.musicplayer.feature_musicPlayer.presentation.songsList.compose
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,10 +28,17 @@ import java.io.File
 fun ItemSongPresentation(
     song: File,
     isLast: Boolean,
-    onClick: () -> Unit
+    isPlaying: Boolean,
+    onClickRecord: () -> Unit,
+    onClickPlay: () -> Unit,
+    onClickStop: () -> Unit
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable {
+                onClickRecord()
+            }
     ) {
         Text(
             text = song.name.deleteExtensionFile(),
@@ -38,18 +47,37 @@ fun ItemSongPresentation(
                 .fillMaxWidth(),
             maxLines = 2
         )
-        Icon(
-            imageVector = Icons.Filled.PlayArrow,
-            contentDescription = stringResource(id = R.string.Play),
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .weight(1f)
-                .size(40.dp)
-                .padding(start = 8.dp)
-                .clickable {
-                    onClick()
-                }
-        )
+        AnimatedContent(
+            targetState = isPlaying
+        ) {
+            if (it) {
+                Icon(
+                    imageVector = Icons.Filled.Stop,
+                    contentDescription = stringResource(id = R.string.Play),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .weight(1f)
+                        .size(40.dp)
+                        .padding(start = 8.dp)
+                        .clickable {
+                            onClickStop()
+                        }
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = stringResource(id = R.string.Play),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .weight(1f)
+                        .size(40.dp)
+                        .padding(start = 8.dp)
+                        .clickable {
+                            onClickPlay()
+                        }
+                )
+            }
+        }
     }
     if (!isLast) {
         Divider(
