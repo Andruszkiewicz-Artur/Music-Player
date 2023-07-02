@@ -45,6 +45,7 @@ fun Player(
 ) {
     val state = service.state.value
     val currentSong = viewModel.file.value
+    var isNext: Boolean? = null
 
     var currentTime by remember {
         mutableStateOf(0)
@@ -55,6 +56,13 @@ fun Player(
 
     LaunchedEffect(key1 = true) {
         viewModel.setUp(state)
+    }
+
+    LaunchedEffect(key1 = state.currentSong ) {
+        Log.d("Check current song", "${state.currentSong}")
+        if(state.currentSong != null && isNext != null) {
+            viewModel.onEvent(PlayerEvent.ChangeSong(state.currentSong))
+        }
     }
 
     if(currentSong == state.currentSong) {
@@ -128,6 +136,9 @@ fun Player(
                     .weight(1f)
                     .clickable {
                         viewModel.onEvent(PlayerEvent.PreviousSong)
+                        if (currentSong != state.currentSong) {
+                            isNext = false
+                        }
                     }
             )
 
@@ -206,6 +217,9 @@ fun Player(
                     .weight(1f)
                     .clickable {
                         viewModel.onEvent(PlayerEvent.NextSong)
+                        if (currentSong != state.currentSong) {
+                            isNext = true
+                        }
                     }
             )
         }

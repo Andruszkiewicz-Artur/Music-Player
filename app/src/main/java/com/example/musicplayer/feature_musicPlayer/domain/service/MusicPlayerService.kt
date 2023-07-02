@@ -26,6 +26,7 @@ import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTI
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_CHANNEL_NAME
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_ID
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.SONG_URI
+import com.example.musicplayer.feature_musicPlayer.core.extensions.deleteExtensionFile
 import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -181,7 +182,7 @@ class MusicPlayerService: Service() {
         notificationManager.notify(
             NOTIFICATION_ID,
             notificationBuilder.setContentText(
-                _state.value.currentSong?.name?.replace(".mp3", "")?.replace(".wav", "") ?: ""
+                _state.value.currentSong?.name?.deleteExtensionFile()
             ).build()
         )
     }
@@ -258,11 +259,8 @@ class MusicPlayerService: Service() {
 
         _state.value.musicList.forEachIndexed { index, file ->
             if (file == currentSong) {
-                Log.d("Check isNext", "${isNext}")
                 song = if(isNext) {
-                    Log.d("Check musicList size", "${_state.value.musicList.size}")
-                    Log.d("Check question", "${index >= _state.value.musicList.size + 1}")
-                    if(index != _state.value.musicList.size + 1) {
+                    if(index <= _state.value.musicList.size - 2) {
                         _state.value.musicList[index + 1]
                     } else {
                         currentSong

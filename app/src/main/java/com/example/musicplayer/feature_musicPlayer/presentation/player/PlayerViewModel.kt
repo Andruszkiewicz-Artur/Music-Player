@@ -66,6 +66,10 @@ class PlayerViewModel @Inject constructor(
                     action = Constants.ACTION_SERVICE_NEXT
                 )
             }
+
+            is PlayerEvent.ChangeSong -> {
+                file.value = event.file
+            }
         }
     }
 }
