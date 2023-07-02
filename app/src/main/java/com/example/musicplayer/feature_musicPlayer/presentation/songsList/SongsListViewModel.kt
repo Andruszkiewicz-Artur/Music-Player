@@ -21,23 +21,17 @@ class SongsListViewModel @Inject constructor(
 
     fun onEvent(event: SongsListEvent) {
         when(event) {
-            is SongsListEvent.Play -> {
-                ServiceHelper.triggerForegroundService(
-                    context = application,
-                    action = ACTION_SERVICE_START
-                )
-            }
             is SongsListEvent.isPermission -> {
                 _isPermission.value = event.isPermission
             }
-
-            SongsListEvent.StartPlay -> {
+            is SongsListEvent.StartPlay -> {
                 ServiceHelper.triggerForegroundService(
                     context = application,
-                    action = ACTION_SERVICE_START
+                    action = ACTION_SERVICE_START,
+                    songUri = event.songUri
                 )
             }
-            SongsListEvent.StopPlay -> {
+            is SongsListEvent.StopPlay -> {
                 ServiceHelper.triggerForegroundService(
                     context = application,
                     action = ACTION_SERVICE_STOP

@@ -9,6 +9,7 @@ import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.CLIC
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.MUSIC_PLAYER_STATE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NEXT_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.PREVIOUS_REQUEST_CODE
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.SONG_URI
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.START_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.STOP_REQUEST_CODE
 import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
@@ -62,8 +63,9 @@ object ServiceHelper {
         )
     }
 
-    fun triggerForegroundService(context: Context, action: String) {
+    fun triggerForegroundService(context: Context, action: String, songUri: String? = null) {
         Intent(context, MusicPlayerService::class.java).apply {
+            putExtra(SONG_URI, songUri)
             this.action = action
             context.startService(this)
         }

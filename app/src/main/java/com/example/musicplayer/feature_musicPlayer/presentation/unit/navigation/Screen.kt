@@ -10,8 +10,8 @@ sealed class Screen(
     object playerScreen: Screen(
         route = "PlayerScreen"
     ) fun sendPath(
-        path: String
+        songUri: String
     ): String {
-        return this.route + "?path=$path"
+        return this.route + "?songUri=$songUri"
     }
 }

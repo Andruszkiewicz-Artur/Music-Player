@@ -2,6 +2,7 @@ package com.example.musicplayer.feature_musicPlayer.presentation.player.compose
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -43,6 +44,7 @@ fun Player(
     service: MusicPlayerService
 ) {
     val state = service.state.value
+    val currentSong = viewModel.file.value
 
     var currentTime by remember {
         mutableStateOf(0)
@@ -51,25 +53,31 @@ fun Player(
         mutableStateOf(0)
     }
 
-    LaunchedEffect(key1 = state.currentState, key2 = state.musicPlayer) {
-        while (true) {
-            if(state.musicPlayer != null && state.musicPlayer.isPlaying) {
-                currentTime = state.musicPlayer.currentPosition / 1000
-                delay(500)
-            } else {
-                if(state.musicPlayer == null) {
-                    currentTime = 0
-                }
-                break
-            }
-        }
+    LaunchedEffect(key1 = true) {
+        viewModel.setUp(state)
     }
 
-    LaunchedEffect(key1 = state.musicPlayer) {
-        if(state.musicPlayer != null) {
-            wholeTime = state.musicPlayer.duration / 1000
-        } else {
-            wholeTime = 0
+    if(currentSong == state.currentSong) {
+        LaunchedEffect(key1 = state.currentState, key2 = state.musicPlayer) {
+            while (true) {
+                if(state.musicPlayer != null && state.musicPlayer.isPlaying) {
+                    currentTime = state.musicPlayer.currentPosition / 1000
+                    delay(500)
+                } else {
+                    if(state.musicPlayer == null) {
+                        currentTime = 0
+                    }
+                    break
+                }
+            }
+        }
+
+        LaunchedEffect(key1 = state.musicPlayer) {
+            if(state.musicPlayer != null) {
+                wholeTime = state.musicPlayer.duration / 1000
+            } else {
+                wholeTime = 0
+            }
         }
     }
 
@@ -81,7 +89,7 @@ fun Player(
     ) {
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = state.currentSong?.name?.deleteExtensionFile() ?: "",
+            text = currentSong?.name?.deleteExtensionFile() ?: "",
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineSmall
@@ -94,32 +102,15 @@ fun Player(
                 .size(200.dp)
         )
 
-        Slider(
-            value = currentTime.toFloat(),
-            valueRange = 0f..wholeTime.toFloat(),
-            enabled = true,
-            onValueChange = {
-                currentTime = it.toInt()
-            },
-            onValueChangeFinished = {
-                if (state.musicPlayer != null) {
-                    state.musicPlayer.seekTo(currentTime * 1000)
+        if(currentSong == state.currentSong) {
+            SliderPresentation(
+                state = state,
+                currentTime = currentTime,
+                wholeTime = wholeTime,
+                onValueChangeSlider = {
+                    currentTime = it
                 }
-            },
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(top = 16.dp)
-        )
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .padding(bottom = 16.dp)
-        ) {
-            TimePresent(time = currentTime)
-            TimePresent(time = (state.musicPlayer?.duration ?: 0) / 1000)
+            )
         }
 
         Row(
@@ -149,7 +140,7 @@ fun Player(
                     .weight(1f)
                     .clickable {
                         if (state.musicPlayer != null) {
-                            if(currentTime - 5 <= wholeTime) {
+                            if (currentTime - 5 <= wholeTime) {
                                 state.musicPlayer.seekTo(0)
                             } else {
                                 state.musicPlayer.seekTo((currentTime - 5) * 1000)
@@ -158,21 +149,35 @@ fun Player(
                     }
             )
 
-            Icon(
-                imageVector = if(state.currentState == MusicPlayerState.Started) Icons.TwoTone.PauseCircle else Icons.TwoTone.PlayCircle,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier
-                    .size(50.dp)
-                    .weight(2f)
-                    .clickable {
-                        if (state.currentState == MusicPlayerState.Started) {
-                            viewModel.onEvent(PlayerEvent.StopSong)
-                        } else {
-                            viewModel.onEvent(PlayerEvent.PlaySong)
-                        }
-                    }
-            )
+            AnimatedContent(
+                targetState = state.musicPlayer?.isPlaying
+            ) {
+                if (it == true && state.currentSong == currentSong) {
+                    Icon(
+                        imageVector = Icons.TwoTone.PauseCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .weight(2f)
+                            .clickable {
+                                viewModel.onEvent(PlayerEvent.StopSong)
+                            }
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.TwoTone.PlayCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .weight(2f)
+                            .clickable {
+                                viewModel.onEvent(PlayerEvent.PlaySong)
+                            }
+                    )
+                }
+            }
 
             Icon(
                 imageVector = Icons.TwoTone.Forward5,
@@ -183,7 +188,7 @@ fun Player(
                     .weight(1f)
                     .clickable {
                         if (state.musicPlayer != null) {
-                            if(currentTime + 5 >= wholeTime) {
+                            if (currentTime + 5 >= wholeTime) {
                                 state.musicPlayer.seekTo(wholeTime * 1000)
                             } else {
                                 state.musicPlayer.seekTo((currentTime + 5) * 1000)

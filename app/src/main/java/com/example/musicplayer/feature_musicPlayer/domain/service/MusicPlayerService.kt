@@ -25,6 +25,7 @@ import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.MUSI
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_CHANNEL_ID
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_CHANNEL_NAME
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_ID
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.SONG_URI
 import com.example.musicplayer.feature_musicPlayer.domain.model.MusicPlayerState
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -57,7 +58,8 @@ class MusicPlayerService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("Check", "$intent")
+        Log.d("Check", "${intent?.extras}")
+        val songPath = intent?.getStringExtra(SONG_URI)
         if(_state.value.musicList.isNotEmpty()) {
             when (intent?.getStringExtra(MUSIC_PLAYER_STATE)) {
                 MusicPlayerState.Started.name -> {
@@ -81,7 +83,7 @@ class MusicPlayerService: Service() {
             intent?.action.let {
                 when (it) {
                     ACTION_SERVICE_START -> {
-                        startPlayMusic()
+                        startPlayMusic(songPath)
                         startForegroundService()
                         setStopButton()
                     }
@@ -103,18 +105,26 @@ class MusicPlayerService: Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun startPlayMusic() {
-        if (_state.value.musicPlayer == null) {
-            _state.value = state.value.copy(
-                currentSong = _state.value.musicList.first()
-            )
-            playAudio(context, _state.value.musicList.first())
+    private fun startPlayMusic(songUri: String? = null) {
+        if (_state.value.currentSong?.absolutePath != songUri && songUri != null) {
+            var currentSong: File? = null
+
+            _state.value.musicList.forEach {
+                if (it.absolutePath == songUri) {
+                    currentSong = it
+                }
+            }
+            playAudio(context, currentSong ?: _state.value.musicList.first())
         } else {
-            _state.value.musicPlayer!!.start()
+            if (_state.value.musicPlayer != null) {
+                _state.value.musicPlayer!!.start()
+            }
         }
-        _state.value = state.value.copy(
-            currentState = MusicPlayerState.Started
-        )
+        if (_state.value.musicPlayer != null) {
+            _state.value = state.value.copy(
+                currentState = MusicPlayerState.Started
+            )
+        }
     }
     private fun stopPlayMusic() {
         if (_state.value.musicPlayer != null) {
@@ -212,23 +222,29 @@ class MusicPlayerService: Service() {
     }
 
     private fun playAudio(context: Context, song: File) {
-        if (_state.value.musicPlayer != null) {
+        if (_state.value.musicPlayer != null && song != _state.value.currentSong) {
             _state.value.musicPlayer?.stop()
             _state.value.musicPlayer?.release()
 
             _state.value = state.value.copy(
                 musicPlayer = null
             )
+
+            _state.value = state.value.copy(
+                currentSong = song
+            )
         }
 
-        _state.value = state.value.copy(
-            musicPlayer = MediaPlayer()
-        )
-        _state.value.musicPlayer?.setAudioAttributes(
-            AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-        )
+        if(_state.value.musicPlayer == null) {
+            _state.value = state.value.copy(
+                musicPlayer = MediaPlayer()
+            )
+            _state.value.musicPlayer?.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+        }
 
         val musicPlayer = _state.value.musicPlayer
 

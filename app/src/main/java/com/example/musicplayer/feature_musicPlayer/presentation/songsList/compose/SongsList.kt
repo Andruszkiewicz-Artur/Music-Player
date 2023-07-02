@@ -89,14 +89,13 @@ fun SongsList(
                                 isLast = state.musicList.last() == song,
                                 isPlaying = if (song == state.currentSong) state.musicPlayer?.isPlaying ?: false else false,
                                 onClickPlay = {
-                                    viewModel.onEvent(SongsListEvent.StartPlay)
+                                    viewModel.onEvent(SongsListEvent.StartPlay(song.absolutePath))
                                 },
                                 onClickStop = {
                                     viewModel.onEvent(SongsListEvent.StopPlay)
                                 },
                                 onClickRecord = {
-                                    viewModel.onEvent(SongsListEvent.Play)
-                                    navController.navigate(Screen.playerScreen.route)
+                                    navController.navigate(Screen.playerScreen.sendPath(song.absolutePath.toString()))
                                 }
                             )
                         }
@@ -118,66 +117,17 @@ fun SongsList(
             }
         }
 
-        if(state.currentSong != null && state.musicPlayer != null) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(24.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .padding(8.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_music_note_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(end = 8.dp)
-                    )
-                    Text(
-                        text = state.currentSong.name.deleteExtensionFile(),
-                        maxLines = 1,
-                        modifier = Modifier
-                            .basicMarquee(
-                                iterations = Int.MAX_VALUE,
-                                delayMillis = 0,
-                                initialDelayMillis = 0,
-                                velocity = 100.dp
-                            )
-                    )
-                }
-                AnimatedContent(targetState = state.musicPlayer.isPlaying) {isPlaying ->
-                    if (isPlaying) {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_pause_24),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    viewModel.onEvent(SongsListEvent.StopPlay)
-                                }
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .clickable {
-                                    viewModel.onEvent(SongsListEvent.StartPlay)
-                                }
-                        )
-                    }
-                }
+        BottomSongPresentation(
+            state = state,
+            onClickPlay = {
+                viewModel.onEvent(SongsListEvent.StartPlay(state.currentSong?.absolutePath ?: ""))
+            },
+            onClickStop = {
+                viewModel.onEvent(SongsListEvent.StopPlay)
+            },
+            onClickRecord = {
+                navController.navigate(Screen.playerScreen.sendPath(state.currentSong?.absolutePath.toString()))
             }
-        }
+        )
     }
 }
