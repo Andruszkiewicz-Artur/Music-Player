@@ -156,7 +156,6 @@ class MusicPlayerService: Service() {
                 _state.value.currentSong!!,
                 isNext = false
             )
-
             playAudio(context, song)
             _state.value = state.value.copy(
                 currentState = MusicPlayerState.Started
@@ -168,12 +167,6 @@ class MusicPlayerService: Service() {
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
-
-//    private fun stopForegroundService() {
-//        notificationManager.cancel(NOTIFICATION_ID)
-//        stopForeground(STOP_FOREGROUND_REMOVE)
-//        stopSelf()
-//    }
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
@@ -261,11 +254,16 @@ class MusicPlayerService: Service() {
     }
 
     private fun findSong(currentSong: File, isNext: Boolean): File {
+        var song = currentSong
+
         _state.value.musicList.forEachIndexed { index, file ->
             if (file == currentSong) {
-                return if(isNext) {
+                Log.d("Check isNext", "${isNext}")
+                song = if(isNext) {
+                    Log.d("Check musicList size", "${_state.value.musicList.size}")
+                    Log.d("Check question", "${index >= _state.value.musicList.size + 1}")
                     if(index != _state.value.musicList.size + 1) {
-                        _state.value.musicList[index]
+                        _state.value.musicList[index + 1]
                     } else {
                         currentSong
                     }
@@ -279,7 +277,7 @@ class MusicPlayerService: Service() {
             }
         }
 
-        return currentSong
+        return song
     }
 
     private fun GetSongs(file: File = Environment.getExternalStorageDirectory()): Array<File> {
