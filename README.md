@@ -5,3 +5,5 @@ It is a music application that downloads audio files from all over your phone. T
 - Dagger hilt
 - Clean Architecture
 - Coroutines
+- Material3
+- Jetpack Compose 
