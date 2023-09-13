@@ -27,8 +27,11 @@ class PlayerViewModel @Inject constructor(
     private var songUri: String? = null
 
     init {
-        songUri = savedStateHandle.get<String>("songUri")
-        Log.d("Check song", "$songUri")
+        savedStateHandle.get<String>("songUri")?.let { uri ->
+            if (!uri.isNullOrEmpty()) {
+                songUri = uri
+            }
+        }
     }
     fun setUp(state: MusicPlayerState) {
         if (songUri != null) {

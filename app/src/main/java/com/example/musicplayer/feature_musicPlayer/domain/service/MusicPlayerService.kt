@@ -223,11 +223,11 @@ class MusicPlayerService: Service() {
             _state.value = state.value.copy(
                 musicPlayer = null
             )
-
-            _state.value = state.value.copy(
-                currentSong = song
-            )
         }
+
+        _state.value = state.value.copy(
+            currentSong = song
+        )
 
         if(_state.value.musicPlayer == null) {
             _state.value = state.value.copy(

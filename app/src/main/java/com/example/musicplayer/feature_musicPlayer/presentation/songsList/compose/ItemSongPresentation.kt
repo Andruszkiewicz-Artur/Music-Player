@@ -42,6 +42,7 @@ fun ItemSongPresentation(
     ) {
         Text(
             text = song.name.deleteExtensionFile(),
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .weight(2f)
                 .fillMaxWidth(),

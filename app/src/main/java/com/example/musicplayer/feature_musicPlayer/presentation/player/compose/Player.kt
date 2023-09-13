@@ -5,10 +5,14 @@ import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.*
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -21,6 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -45,7 +51,9 @@ fun Player(
 ) {
     val state = service.state.value
     val currentSong = viewModel.file.value
-    var isNext: Boolean? = null
+    var isNext by remember {
+        mutableStateOf<Boolean?>(null)
+    }
 
     var currentTime by remember {
         mutableStateOf(0)
@@ -58,7 +66,7 @@ fun Player(
         viewModel.setUp(state)
     }
 
-    LaunchedEffect(key1 = state.currentSong ) {
+    LaunchedEffect(key1 = state.currentSong, key2 = isNext ) {
         Log.d("Check current song", "${state.currentSong}")
         if(state.currentSong != null && isNext != null) {
             viewModel.onEvent(PlayerEvent.ChangeSong(state.currentSong))
@@ -67,8 +75,8 @@ fun Player(
 
     if(currentSong == state.currentSong) {
         LaunchedEffect(key1 = state.currentState, key2 = state.musicPlayer) {
-            while (true) {
-                if(state.musicPlayer != null && state.musicPlayer.isPlaying) {
+            while (state.currentState == MusicPlayerState.Started && state.musicPlayer != null) {
+                if(state.musicPlayer.isPlaying) {
                     currentTime = state.musicPlayer.currentPosition / 1000
                     delay(500)
                 } else {
@@ -91,35 +99,41 @@ fun Player(
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(
+                color = MaterialTheme.colorScheme.background
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = currentSong?.name?.deleteExtensionFile() ?: "",
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineSmall
-        )
-
         Image(
-            painter = painterResource(id = R.drawable.baseline_music_note_24),
+            painter = painterResource(id = R.drawable.recording),
             contentDescription = null,
             modifier = Modifier
-                .size(200.dp)
+                .padding(vertical = 16.dp)
+                .size(300.dp)
+                .clip(RoundedCornerShape(20.dp))
         )
 
-        if(currentSong == state.currentSong) {
-            SliderPresentation(
-                state = state,
-                currentTime = currentTime,
-                wholeTime = wholeTime,
-                onValueChangeSlider = {
-                    currentTime = it
-                }
-            )
-        }
+        Text(
+            text = currentSong?.name?.deleteExtensionFile() ?: "",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+
+        SliderPresentation(
+            state = state,
+            currentTime = currentTime,
+            wholeTime = wholeTime,
+            onValueChangeSlider = {
+                currentTime = it
+            }
+        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -136,9 +150,7 @@ fun Player(
                     .weight(1f)
                     .clickable {
                         viewModel.onEvent(PlayerEvent.PreviousSong)
-                        if (currentSong != state.currentSong) {
-                            isNext = false
-                        }
+                        isNext = false
                     }
             )
 
@@ -217,9 +229,7 @@ fun Player(
                     .weight(1f)
                     .clickable {
                         viewModel.onEvent(PlayerEvent.NextSong)
-                        if (currentSong != state.currentSong) {
-                            isNext = true
-                        }
+                        isNext = true
                     }
             )
         }

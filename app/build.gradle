@@ -67,7 +67,7 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:1.6.0-alpha01"
 
     // Navigation
-    def navVersion = "2.7.0-beta01"
+    def navVersion = "2.6.0"
 
     implementation "androidx.navigation:navigation-compose:$navVersion"
 

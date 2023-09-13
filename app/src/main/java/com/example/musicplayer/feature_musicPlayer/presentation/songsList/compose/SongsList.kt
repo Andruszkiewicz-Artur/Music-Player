@@ -62,6 +62,9 @@ fun SongsList(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier
             .fillMaxSize()
+            .background(
+                color = MaterialTheme.colorScheme.background
+            )
     ) {
         Column(
             verticalArrangement = if(isPermission) Arrangement.Top else Arrangement.Center,
@@ -98,6 +101,12 @@ fun SongsList(
                                     navController.navigate(Screen.playerScreen.sendPath(song.absolutePath.toString()))
                                 }
                             )
+                        }
+                        
+                        item {
+                            if(state.currentSong != null && state.musicPlayer != null) {
+                                Spacer(modifier = Modifier.height(100.dp))
+                            }
                         }
                     }
                 } else {
