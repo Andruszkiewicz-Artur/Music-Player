@@ -5,4 +5,6 @@
     <string name="Play">Play</string>
     <string name="MusicPlaylist">Music Playlist</string>
     <string name="YouDontHaveSongsOnYouPhone">You don`t have songs on you phone!</string>
+    <string name="YouNeedToWorkApp">You need to working this app</string>
+    <string name="DescriptionToAllow"><![CDATA[You need allow permissions in settings or re-install app and allow them.\n\nIf you want allow manually you need go to settings -> apps -> apps -> Music Player -> Permissions and over there you need allow all.]]></string>
 </resources>

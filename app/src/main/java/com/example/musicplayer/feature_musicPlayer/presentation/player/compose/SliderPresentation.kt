@@ -44,6 +44,6 @@ fun SliderPresentation(
             .padding(bottom = 16.dp)
     ) {
         TimePresent(time = currentTime)
-        TimePresent(time = (state.musicPlayer?.duration ?: 0) / 1000)
+        TimePresent(time = wholeTime)
     }
 }

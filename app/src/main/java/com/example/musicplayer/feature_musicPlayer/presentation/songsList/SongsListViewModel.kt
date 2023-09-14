@@ -16,14 +16,8 @@ class SongsListViewModel @Inject constructor(
     private val application: Application
 ) : ViewModel() {
 
-    private val _isPermission = mutableStateOf(false)
-    val isPermission = _isPermission
-
     fun onEvent(event: SongsListEvent) {
         when(event) {
-            is SongsListEvent.isPermission -> {
-                _isPermission.value = event.isPermission
-            }
             is SongsListEvent.StartPlay -> {
                 ServiceHelper.triggerForegroundService(
                     context = application,

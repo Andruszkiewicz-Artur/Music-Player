@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants
 import com.example.musicplayer.feature_musicPlayer.domain.service.MusicPlayerService
 import com.example.musicplayer.feature_musicPlayer.presentation.player.compose.Player
 import com.example.musicplayer.feature_musicPlayer.presentation.songsList.compose.SongsList
@@ -33,9 +35,9 @@ fun NavGraph(
         }
 
         composable(
-            route = Screen.playerScreen.route + "?songUri={songUri}",
+            route = Screen.playerScreen.route + "?${Constants.SONG_URI}={${Constants.SONG_URI}}",
             arguments = listOf(
-                navArgument("songUri") {
+                navArgument(Constants.SONG_URI) {
                     type = NavType.StringType
                     defaultValue = ""
                 }

@@ -3,7 +3,9 @@ package com.example.musicplayer.feature_musicPlayer.domain.service
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -17,10 +19,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.example.musicplayer.R
+import com.example.musicplayer.feature_musicPlayer.MainActivity
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_NEXT
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_PREVIOUS
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_START
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.ACTION_SERVICE_STOP
+import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.DEEP_LINK_URI
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.MUSIC_PLAYER_STATE
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_CHANNEL_ID
 import com.example.musicplayer.feature_musicPlayer.core.constants.Constants.NOTIFICATION_CHANNEL_NAME
@@ -178,12 +183,26 @@ class MusicPlayerService: Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun updateNotification() {
+    private fun updateNotification(uriPath: Uri) {
+//        val flag = PendingIntent.FLAG_IMMUTABLE
+//        val clickIntent = Intent(
+//            Intent.ACTION_VIEW,
+//            "${DEEP_LINK_URI}/${SONG_URI}=$uriPath".toUri(),
+//            context,
+//            MainActivity::class.java
+//        )
+//        val clickPendingIntent: PendingIntent = TaskStackBuilder.create(context).run {
+//            addNextIntentWithParentStack(clickIntent)
+//            getPendingIntent(1, flag)
+//        }
+
         notificationManager.notify(
             NOTIFICATION_ID,
             notificationBuilder.setContentText(
                 _state.value.currentSong?.name?.deleteExtensionFile()
-            ).build()
+            )
+//                .setContentIntent(clickPendingIntent)
+                .build()
         )
     }
 
@@ -247,7 +266,7 @@ class MusicPlayerService: Service() {
                 musicPlayer.setDataSource(context, Uri.parse(song.absolutePath))
                 musicPlayer.prepare()
                 musicPlayer.start()
-                updateNotification()
+                updateNotification(song.absolutePath.toUri())
             } catch (e: Exception) {
                 Log.d("Check Error", e.message ?: "Unknown Error")
             }

@@ -51,6 +51,7 @@ fun Player(
 ) {
     val state = service.state.value
     val currentSong = viewModel.file.value
+    val musicPlayer = viewModel.musicPlayer.value
     var isNext by remember {
         mutableStateOf<Boolean?>(null)
     }
@@ -89,8 +90,20 @@ fun Player(
         }
 
         LaunchedEffect(key1 = state.musicPlayer) {
+            Log.d("Player", "${state.musicPlayer?.duration}")
             if(state.musicPlayer != null) {
                 wholeTime = state.musicPlayer.duration / 1000
+            } else {
+                wholeTime = 0
+            }
+        }
+    } else {
+        LaunchedEffect(key1 = musicPlayer) {
+            Log.d("Player", "musicPlayer?.duration: ${musicPlayer?.duration}")
+            Log.d("Player", "musicPlayer: $musicPlayer")
+            if(musicPlayer != null) {
+                Log.d("Player", "musicPlayer.duration / 1000: ${musicPlayer.duration / 1000}")
+                wholeTime = musicPlayer.duration / 1000
             } else {
                 wholeTime = 0
             }

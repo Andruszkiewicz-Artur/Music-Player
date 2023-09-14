@@ -6,12 +6,14 @@ object Constants {
     const val ACTION_SERVICE_NEXT = "ACTION_SERVICE_NEXT"
     const val ACTION_SERVICE_PREVIOUS = "ACTION_SERVICE_PREVIOUS"
 
-    const val SONG_URI = "SONG_URI"
+    const val SONG_URI = "songUri"
     const val MUSIC_PLAYER_STATE = "MUSIC_PLAYER_STATE"
 
     const val NOTIFICATION_CHANNEL_ID = "MUSIC_PLAYER_NOTIFICATION_ID"
     const val NOTIFICATION_CHANNEL_NAME = "MUSIC_PLAYER_NOTIFICATION"
     const val NOTIFICATION_ID = 20
+
+    const val DEEP_LINK_URI = "https://music-player.com"
 
     const val CLICK_REQUEST_CODE = 100
     const val START_REQUEST_CODE = 101
