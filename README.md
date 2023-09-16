@@ -7,3 +7,5 @@ It is a music application that downloads audio files from all over your phone. T
 - Coroutines
 - Material3
 - Jetpack Compose 
+
+<p><b>App presentation: </b> <a href = "https://youtu.be/BrzvQc_XgGk">link to video on youtube</a></p>
