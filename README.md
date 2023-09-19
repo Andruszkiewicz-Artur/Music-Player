@@ -8,4 +8,10 @@ It is a music application that downloads audio files from all over your phone. T
 - Material3
 - Jetpack Compose 
 
-<p><b>App presentation: </b> <a href = "https://youtu.be/BrzvQc_XgGk">link to video on youtube</a></p>
+# Presentation App
+<p align = "center">
+  <a href = "https://youtu.be/BrzvQc_XgGk">Link to video</a>
+</p>
+<p align = "Center">
+  <img src="https://i.postimg.cc/rs16X3jH/Presentation-Mobile-App.jpg" href="">
+</p>
